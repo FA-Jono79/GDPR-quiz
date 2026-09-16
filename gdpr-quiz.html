@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GDPR för personal – kunskapstest</title>
+<style>
+  :root{
+    --fa-red:#C8102E;
+    --fa-red-dark:#9c0c23;
+    --ink:#2b2b2b;
+    --muted:#6b6b6b;
+    --bg:#f5f5f4;
+    --card:#ffffff;
+    --ok:#1e7d34;
+    --bad:#b3261e;
+    --border:#e2e0dc;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Calibri, "Segoe UI", Arial, sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:32px 16px;
+  }
+  .app{
+    width:100%;
+    max-width:640px;
+  }
+  header.top{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:20px;
+  }
+  .mark{
+    width:40px;height:40px;border-radius:8px;
+    background:var(--fa-red);
+    flex:0 0 auto;
+  }
+  header.top h1{
+    font-size:19px;
+    margin:0;
+    line-height:1.25;
+  }
+  header.top p{
+    margin:2px 0 0;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:28px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .screen{display:none;}
+  .screen.active{display:block;}
+  label{
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  input[type=text], input[type=email]{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:15px;
+    font-family:inherit;
+    margin-bottom:16px;
+  }
+  input[type=text]:focus, input[type=email]:focus{
+    outline:2px solid var(--fa-red);
+    outline-offset:1px;
+  }
+  button.primary{
+    background:var(--fa-red);
+    color:#fff;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    width:100%;
+  }
+  button.primary:hover{background:var(--fa-red-dark);}
+  button.primary:disabled{background:#c9a9ae; cursor:not-allowed;}
+  button.secondary{
+    background:transparent;
+    color:var(--fa-red);
+    border:1px solid var(--fa-red);
+    padding:10px 18px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .progress{
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .bar{
+    height:6px;
+    background:var(--border);
+    border-radius:3px;
+    overflow:hidden;
+    margin-bottom:20px;
+  }
+  .bar-fill{
+    height:100%;
+    background:var(--fa-red);
+    width:0%;
+    transition:width .25s ease;
+  }
+  .question{
+    font-size:17px;
+    font-weight:600;
+    margin-bottom:18px;
+    line-height:1.4;
+  }
+  .option{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:12px 14px;
+    margin-bottom:10px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:#fff;
+    font-size:14.5px;
+    font-family:inherit;
+    cursor:pointer;
+    transition:border-color .15s, background .15s;
+  }
+  .option:hover:not(:disabled){border-color:var(--fa-red);}
+  .option:disabled{cursor:default;}
+  .option.correct{border-color:var(--ok); background:#eaf6ec; font-weight:600;}
+  .option.incorrect{border-color:var(--bad); background:#fbeceb; font-weight:600;}
+  .explanation{
+    font-size:13.5px;
+    color:var(--muted);
+    background:#f6f6f5;
+    border-left:3px solid var(--fa-red);
+    padding:10px 14px;
+    border-radius:0 6px 6px 0;
+    margin:14px 0 20px;
+    display:none;
+  }
+  .explanation.show{display:block;}
+  .result-score{
+    text-align:center;
+    margin-bottom:8px;
+  }
+  .result-score .big{
+    font-size:44px;
+    font-weight:700;
+    color:var(--fa-red);
+  }
+  .result-score .of{
+    font-size:15px;
+    color:var(--muted);
+  }
+  .verdict{
+    text-align:center;
+    font-size:17px;
+    font-weight:700;
+    margin:6px 0 20px;
+  }
+  .verdict.pass{color:var(--ok);}
+  .verdict.fail{color:var(--bad);}
+  .submit-status{
+    font-size:13px;
+    text-align:center;
+    color:var(--muted);
+    margin-top:14px;
+    min-height:18px;
+  }
+  .fallback-toggle{
+    display:block;
+    text-align:center;
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:10px;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .fallback-box{
+    display:none;
+    text-align:center;
+    margin-top:10px;
+  }
+  .fallback-box.show{display:block;}
+  .fallback-box a{
+    font-size:13px;
+    color:var(--fa-red);
+  }
+  footer.note{
+    font-size:11.5px;
+    color:var(--muted);
+    text-align:center;
+    margin-top:18px;
+    line-height:1.5;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="mark"></div>
+    <div>
+      <h1>GDPR för personal</h1>
+      <p>Kunskapstest – dataskydd i det dagliga arbetet</p>
+    </div>
+  </header>
+
+  <div class="card">
+
+    <!-- START -->
+    <div class="screen active" id="screen-start">
+      <p style="margin-top:0;font-size:14.5px;line-height:1.5;">
+        Testet innehåller 12 frågor om GDPR och hantering av personuppgifter,
+        med exempel som är relevanta för arbetet inom Frälsningsarmén
+        (t.ex. boendedokumentation, kamerabevakning och passersystem).
+        Godkänt resultat är minst 10 av 12 rätt (≈83&nbsp;%).
+      </p>
+      <label for="input-namn">Namn</label>
+      <input type="text" id="input-namn" placeholder="För- och efternamn">
+      <label for="input-epost">E-post</label>
+      <input type="email" id="input-epost" placeholder="namn@fralsningsarmen.se">
+      <button class="primary" id="btn-start">Starta testet</button>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="screen" id="screen-quiz">
+      <div class="progress" id="progress-text">Fråga 1 av 12</div>
+      <div class="bar"><div class="bar-fill" id="progress-bar"></div></div>
+      <div class="question" id="question-text"></div>
+      <div id="options-container"></div>
+      <div class="explanation" id="explanation-box"></div>
+      <button class="primary" id="btn-next" style="display:none;">Nästa fråga</button>
+    </div>
+
+    <!-- RESULT -->
+    <div class="screen" id="screen-result">
+      <div class="result-score">
+        <div class="big" id="result-score-num">0</div>
+        <div class="of" id="result-score-of">av 12 rätt</div>
+      </div>
+      <div class="verdict" id="result-verdict"></div>
+      <button class="primary" id="btn-retry">Gör om testet</button>
+      <div class="submit-status" id="submit-status"></div>
+      <span class="fallback-toggle" id="fallback-toggle">Fungerar inte den automatiska inlämningen? Skicka via e-post istället</span>
+      <div class="fallback-box" id="fallback-box">
+        <a href="#" id="fallback-link">Öppna e-postutkast med resultatet</a>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="note">
+    Detta test är avsett som ett internt utbildningsmoment och en allmän
+    kunskapsgenomgång av GDPR — inte som juridisk rådgivning. Kontakta
+    Frälsningsarméns dataskyddsombud/jurist vid osäkerhet i ett enskilt fall.
+  </footer>
+</div>
+
+<script>
+// ============================================================
+// CONFIG — anpassa vid driftsättning
+// ============================================================
+const CONFIG = {
+  quizCode: "GDPRUTB",
+  passCount: 10,              // antal rätt som krävs för godkänt (av 12)
+  // Power Automate HTTP-trigger URL (samma mönster som LBBRAND/NGBRAND).
+  // Lämna tom sträng tills flödet är byggt — testet fungerar lokalt även utan den.
+  resultFlowUrl: "https://default98a701b1e22c45d299261f334ccac4.3d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/12/workflows/364c689ffc51495192d7ed855b0d1c34/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=081L629j3k-uIyH4091DOxEsXIt6FZnOrbAhGp6VnmM",
+  // Reservmottagare för mailto-fallback om det automatiska flödet inte används/fungerar.
+  fallbackEmail: "ANGE-MOTTAGARE@fralsningsarmen.se",
+
+  questions: [
+    {
+      q: "Vad räknas som en personuppgift enligt GDPR?",
+      options: [
+        "Endast namn och personnummer",
+        "All information som direkt eller indirekt kan identifiera en levande fysisk person",
+        "Endast uppgifter som lagras digitalt",
+        "Enbart känsliga uppgifter, t.ex. hälsodata"
+      ],
+      correct: 1,
+      explanation: "GDPR definierar personuppgift brett: allt som direkt eller indirekt kan kopplas till en identifierad eller identifierbar person räknas — t.ex. namn, foto, röstinspelning eller en IP-adress."
+    },
+    {
+      q: "Vilket av följande räknas som en känslig personuppgift (särskild kategori) enligt GDPR?",
+      options: [
+        "Ett kundnummer",
+        "En arbetsplatsadress",
+        "Uppgift om en persons hälsotillstånd",
+        "Ett anställningsdatum"
+      ],
+      correct: 2,
+      explanation: "Särskilda kategorier av personuppgifter omfattar bland annat hälsouppgifter, etniskt ursprung, religion, sexuell läggning, politiska åsikter, fackligt medlemskap samt genetiska/biometriska uppgifter för identifiering. De kräver extra skyddsåtgärder och en tydlig laglig grund."
+    },
+    {
+      q: "Vad innebär principen om uppgiftsminimering?",
+      options: [
+        "Man ska samla in så mycket data som möjligt, för säkerhets skull",
+        "Man ska bara samla in de personuppgifter som är nödvändiga för det angivna syftet",
+        "All insamlad data ska raderas efter en vecka oavsett syfte",
+        "Endast IT-avdelningen får samla in personuppgifter"
+      ],
+      correct: 1,
+      explanation: "Uppgiftsminimering innebär att behandlingen ska begränsas till vad som verkligen behövs för det ändamål som angetts — inte 'bra att ha'-data för eventuellt framtida bruk."
+    },
+    {
+      q: "Vilka är exempel på lagliga grunder för behandling av personuppgifter enligt GDPR artikel 6?",
+      options: [
+        "Samtycke, avtal, rättslig förpliktelse, myndighetsutövning/allmänt intresse, grundläggande intressen och berättigat intresse",
+        "Bara samtycke — det är alltid den enda giltiga grunden",
+        "Vana, praxis och intern policy",
+        "Att den registrerade är anställd räcker alltid som grund, oavsett ändamål"
+      ],
+      correct: 0,
+      explanation: "GDPR artikel 6 anger sex möjliga lagliga grunder. Samtycke är bara en av dem — i många verksamheter, t.ex. vid vård/stöd eller anställning, är avtal, rättslig förpliktelse eller berättigat intresse ofta mer relevanta grunder."
+    },
+    {
+      q: "En klient, nuvarande eller tidigare, ber att få läsa sin journal. Vad gör du?",
+      options: [
+        "Skriver ut och lämnar över",
+        "Meddelar arbetsledning eller chef i beredskap som sköter processen",
+        "E-postar den till honom",
+        "Säger nej, vår policy tillåter inte läsning av journal"
+      ],
+      correct: 1,
+      explanation: "Klienten har rätt att läsa sin journal, men vi förbehåller oss rätten att göra en kontroll innan. Det kan till exempel ha smugit sig in annans personuppgifter som i så fall ska rensas innan. Klienten ska få tillgång till fysiskt exemplar inom 14 dagar. Vi mailar vanligtvis inte ut journaler."
+    },
+    {
+      q: "Inom hur lång tid måste en personuppgiftsincident som innebär en risk för de registrerades rättigheter och friheter normalt anmälas till IMY (Integritetsskyddsmyndigheten)?",
+      options: [
+        "24 timmar",
+        "72 timmar",
+        "7 dagar",
+        "30 dagar"
+      ],
+      correct: 1,
+      explanation: "Huvudregeln är att en anmälningspliktig personuppgiftsincident ska anmälas till tillsynsmyndigheten (IMY i Sverige) utan onödigt dröjsmål och om möjligt inom 72 timmar från upptäckt. För dig som anställd gäller att anmäla incident till verksamhetschef."
+    },
+    {
+      q: "Hur länge får en organisation spara personuppgifter enligt GDPR?",
+      options: [
+        "För alltid, om uppgifterna skulle kunna vara användbara senare",
+        "Endast så länge det finns ett giltigt och angivet ändamål — därefter ska uppgifterna gallras eller anonymiseras",
+        "Exakt ett år, oavsett verksamhet eller ändamål",
+        "Så länge det finns ledigt lagringsutrymme"
+      ],
+      correct: 1,
+      explanation: "Principen om lagringsminimering innebär att personuppgifter inte får sparas längre än nödvändigt för de ändamål de samlades in för, om inte en annan rättslig grund (t.ex. arkivlagstiftning) motiverar längre lagring."
+    },
+    {
+      q: "I tjänsten ska jag göra en skrivelse om en klient (till exempel en rapport) där personuppgifter finns med, hur ska dokumentet sparas digitalt?",
+      options: [
+        "Lokalt på datorn",
+        "I huvudsak ska all sådan dokumentation ligga i Idok",
+        "På OneDrive med mitt tjänstekonto",
+        "I delade filer i Teams så alla kollegor kan hitta den"
+      ],
+      correct: 1,
+      explanation: "Vid hantering av känsliga uppgifter som exempelvis journalanteckningar, får dessa endast sparas i avsett system (t.ex. Idok), ej lokalt i datorn eller andra molntjänster. Se Pärleportalen för aktuell policy: https://parleportalen.fralsningsarmen.se/content/policy?selected=policy-angaaende-it-verksamheter"
+    },
+    {
+      q: "Vilken laglig grund används normalt för kamerabevakning i eller vid en fastighet, t.ex. för att förebygga inbrott eller skadegörelse?",
+      options: [
+        "Samtycke från alla som skulle kunna tänkas passera",
+        "Berättigat intresse, efter en dokumenterad intresseavvägning mot den enskildes integritet",
+        "Avtal med de anställda om att de accepterar övervakning",
+        "Ingen laglig grund krävs för kameror inomhus"
+      ],
+      correct: 1,
+      explanation: "Kamerabevakning grundas normalt på berättigat intresse, vilket kräver en intresseavvägning samt tydlig information (skyltning) om bevakningen. Vissa verksamheter kan även omfattas av kamerabevakningslagens tillståndskrav."
+    },
+    {
+      q: "En pärm med utskrivna personuppgifter om en boende ska förvaras...",
+      options: [
+        "Öppet i personalrummet, så alla kollegor lätt kommer åt den",
+        "Inlåst, med åtkomst begränsad till behörig personal",
+        "I bilen över natten, för att spara tid nästa dag",
+        "Kvar på skrivbordet mellan arbetspassen"
+      ],
+      correct: 1,
+      explanation: "Fysiska handlingar med personuppgifter, särskilt känsliga sådana, ska förvaras inlåst med begränsad åtkomst — precis som digitala system skyddas med behörighetsstyrning."
+    },
+    {
+      q: "En kollega undrar om det går bra att mejla en lista med personnummer och hälsouppgifter till en extern samarbetspartner via vanlig, okrypterad e-post. Vad bör du svara?",
+      options: [
+        "Ja, det går bra så länge mottagaren verkar pålitlig",
+        "Nej — känsliga uppgifter bör skickas på ett säkert/krypterat sätt, och bara om det finns en laglig grund och ett tydligt syfte",
+        "Ja, men bara om det sker på en fredag",
+        "Nej, e-post får aldrig användas i tjänsten oavsett innehåll"
+      ],
+      correct: 1,
+      explanation: "Känsliga personuppgifter kräver extra skyddsåtgärder vid överföring. Vanlig, okrypterad e-post är sällan lämplig — och överföringen ska alltid vila på en laglig grund och begränsas till vad mottagaren faktiskt behöver."
+    },
+    {
+      q: "Vem är personuppgiftsansvarig för de personuppgifter som behandlas i Frälsningsarméns verksamhet?",
+      options: [
+        "Varje enskild anställd, personligen",
+        "Frälsningsarmén som organisation/juridisk person",
+        "IMY (Integritetsskyddsmyndigheten)",
+        "Den externa molntjänstleverantören"
+      ],
+      correct: 1,
+      explanation: "Det är organisationen — Frälsningsarmén — som är personuppgiftsansvarig och bär det juridiska ansvaret för att behandlingen sker enligt GDPR, även om enskilda anställda hanterar uppgifterna i det dagliga arbetet."
+    }
+  ]
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  name: "",
+  email: "",
+  index: 0,
+  score: 0,
+  answered: false
+};
+
+const el = (id) => document.getElementById(id);
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  el(id).classList.add("active");
+}
+
+el("btn-start").addEventListener("click", () => {
+  const namn = el("input-namn").value.trim();
+  const epost = el("input-epost").value.trim();
+  if(!namn || !epost){
+    alert("Fyll i både namn och e-post innan du startar testet.");
+    return;
+  }
+  state.name = namn;
+  state.email = epost;
+  state.index = 0;
+  state.score = 0;
+  showScreen("screen-quiz");
+  renderQuestion();
+});
+
+function renderQuestion(){
+  const total = CONFIG.questions.length;
+  const q = CONFIG.questions[state.index];
+  state.answered = false;
+
+  el("progress-text").textContent = `Fråga ${state.index + 1} av ${total}`;
+  el("progress-bar").style.width = `${(state.index / total) * 100}%`;
+  el("question-text").textContent = q.q;
+  el("explanation-box").classList.remove("show");
+  el("explanation-box").textContent = "";
+  el("btn-next").style.display = "none";
+
+  const container = el("options-container");
+  container.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.textContent = opt;
+    btn.addEventListener("click", () => selectAnswer(i));
+    container.appendChild(btn);
+  });
+}
+
+function selectAnswer(i){
+  if(state.answered) return;
+  state.answered = true;
+
+  const q = CONFIG.questions[state.index];
+  const buttons = el("options-container").querySelectorAll(".option");
+  buttons.forEach((b, idx) => {
+    b.disabled = true;
+    if(idx === q.correct) b.classList.add("correct");
+    else if(idx === i) b.classList.add("incorrect");
+  });
+
+  if(i === q.correct) state.score++;
+
+  const expBox = el("explanation-box");
+  expBox.textContent = q.explanation;
+  expBox.classList.add("show");
+
+  el("btn-next").style.display = "block";
+  el("btn-next").textContent = (state.index === CONFIG.questions.length - 1) ? "Se resultat" : "Nästa fråga";
+}
+
+el("btn-next").addEventListener("click", () => {
+  state.index++;
+  if(state.index >= CONFIG.questions.length){
+    el("progress-bar").style.width = "100%";
+    finishQuiz();
+  } else {
+    renderQuestion();
+  }
+});
+
+function finishQuiz(){
+  const total = CONFIG.questions.length;
+  const pass = state.score >= CONFIG.passCount;
+
+  el("result-score-num").textContent = state.score;
+  el("result-score-of").textContent = `av ${total} rätt`;
+  const verdict = el("result-verdict");
+  verdict.textContent = pass
+    ? "Godkänt ✓"
+    : `Ej godkänt — minst ${CONFIG.passCount} av ${total} rätt krävs`;
+  verdict.className = "verdict " + (pass ? "pass" : "fail");
+
+  showScreen("screen-result");
+  submitResult(pass, total);
+  setupFallback(pass, total);
+}
+
+function submitResult(pass, total){
+  const statusEl = el("submit-status");
+
+  if(!CONFIG.resultFlowUrl){
+    statusEl.textContent = "Automatisk resultatinlämning är inte konfigurerad ännu — resultatet visas bara här.";
+    return;
+  }
+
+  const payload = {
+    namn: state.name,
+    epost: state.email,
+    poang: state.score,
+    maxpoang: total,
+    godkand: pass,
+    datum: new Date().toISOString(),
+    kod: CONFIG.quizCode
+  };
+
+  statusEl.textContent = "Skickar resultat...";
+  fetch(CONFIG.resultFlowUrl, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(payload)
+  })
+  .then(res => {
+    statusEl.textContent = res.ok
+      ? "Resultatet har skickats in."
+      : "Något gick fel vid inlämningen — försök igen eller använd e-postalternativet nedan.";
+  })
+  .catch(() => {
+    statusEl.textContent = "Kunde inte skicka resultatet automatiskt — använd e-postalternativet nedan.";
+  });
+}
+
+function setupFallback(pass, total){
+  const toggle = el("fallback-toggle");
+  const box = el("fallback-box");
+  const link = el("fallback-link");
+
+  toggle.onclick = () => box.classList.toggle("show");
+
+  const subject = encodeURIComponent(`${CONFIG.quizCode} resultat: ${state.name}`);
+  const body = encodeURIComponent(
+    `Namn: ${state.name}\n` +
+    `E-post: ${state.email}\n` +
+    `Poäng: ${state.score} av ${total}\n` +
+    `Godkänd: ${pass ? "Ja" : "Nej"}\n` +
+    `Datum: ${new Date().toLocaleString("sv-SE")}\n` +
+    `Kod: ${CONFIG.quizCode}`
+  );
+  link.href = `mailto:${CONFIG.fallbackEmail}?subject=${subject}&body=${body}`;
+}
+
+el("btn-retry").addEventListener("click", () => {
+  el("fallback-box").classList.remove("show");
+  showScreen("screen-start");
+});
+</script>
+</body>
+</html>
