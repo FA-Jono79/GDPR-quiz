@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GDPR för personal – kunskapstest</title>
+<style>
+  :root{
+    --fa-red:#C8102E;
+    --fa-red-dark:#9c0c23;
+    --ink:#2b2b2b;
+    --muted:#6b6b6b;
+    --bg:#f5f5f4;
+    --card:#ffffff;
+    --ok:#1e7d34;
+    --bad:#b3261e;
+    --border:#e2e0dc;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:Calibri, "Segoe UI", Arial, sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:32px 16px;
+  }
+  .app{
+    width:100%;
+    max-width:640px;
+  }
+  header.top{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:20px;
+  }
+  .mark{
+    width:34px;height:40px;
+    flex:0 0 auto;
+    object-fit:contain;
+  }
+  header.top h1{
+    font-size:19px;
+    margin:0;
+    line-height:1.25;
+  }
+  header.top p{
+    margin:2px 0 0;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:28px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .screen{display:none;}
+  .screen.active{display:block;}
+  label{
+    display:block;
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  input[type=text], input[type=email]{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    font-size:15px;
+    font-family:inherit;
+    margin-bottom:16px;
+  }
+  input[type=text]:focus, input[type=email]:focus{
+    outline:2px solid var(--fa-red);
+    outline-offset:1px;
+  }
+  button.primary{
+    background:var(--fa-red);
+    color:#fff;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    width:100%;
+  }
+  button.primary:hover{background:var(--fa-red-dark);}
+  button.primary:disabled{background:#c9a9ae; cursor:not-allowed;}
+  button.secondary{
+    background:transparent;
+    color:var(--fa-red);
+    border:1px solid var(--fa-red);
+    padding:10px 18px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .progress{
+    font-size:13px;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+  .bar{
+    height:6px;
+    background:var(--border);
+    border-radius:3px;
+    overflow:hidden;
+    margin-bottom:20px;
+  }
+  .bar-fill{
+    height:100%;
+    background:var(--fa-red);
+    width:0%;
+    transition:width .25s ease;
+  }
+  .question{
+    font-size:17px;
+    font-weight:600;
+    margin-bottom:18px;
+    line-height:1.4;
+  }
+  .option{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:12px 14px;
+    margin-bottom:10px;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:#fff;
+    font-size:14.5px;
+    font-family:inherit;
+    cursor:pointer;
+    transition:border-color .15s, background .15s;
+  }
+  .option:hover:not(:disabled){border-color:var(--fa-red);}
+  .option:disabled{cursor:default;}
+  .option.correct{border-color:var(--ok); background:#eaf6ec; font-weight:600;}
+  .option.incorrect{border-color:var(--bad); background:#fbeceb; font-weight:600;}
+  .explanation{
+    font-size:13.5px;
+    color:var(--muted);
+    background:#f6f6f5;
+    border-left:3px solid var(--fa-red);
+    padding:10px 14px;
+    border-radius:0 6px 6px 0;
+    margin:14px 0 20px;
+    display:none;
+  }
+  .explanation.show{display:block;}
+  .result-score{
+    text-align:center;
+    margin-bottom:8px;
+  }
+  .result-score .big{
+    font-size:44px;
+    font-weight:700;
+    color:var(--fa-red);
+  }
+  .result-score .of{
+    font-size:15px;
+    color:var(--muted);
+  }
+  .verdict{
+    text-align:center;
+    font-size:17px;
+    font-weight:700;
+    margin:6px 0 20px;
+  }
+  .verdict.pass{color:var(--ok);}
+  .verdict.fail{color:var(--bad);}
+  .submit-status{
+    font-size:13px;
+    text-align:center;
+    color:var(--muted);
+    margin-top:14px;
+    min-height:18px;
+  }
+  .fallback-toggle{
+    display:block;
+    text-align:center;
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:10px;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .fallback-box{
+    display:none;
+    text-align:center;
+    margin-top:10px;
+  }
+  .fallback-box.show{display:block;}
+  .fallback-box a{
+    font-size:13px;
+    color:var(--fa-red);
+  }
+  #info-text a{
+    color:var(--fa-red);
+    font-weight:600;
+  }
+  footer.note{
+    font-size:11.5px;
+    color:var(--muted);
+    text-align:center;
+    margin-top:18px;
+    line-height:1.5;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <img class="mark" src="data:image/png;base64,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" alt="Frälsningsarmén">
+    <div>
+      <h1>GDPR för personal</h1>
+      <p>Kunskapstest – dataskydd i det dagliga arbetet</p>
+    </div>
+  </header>
+
+  <div class="card">
+
+    <!-- START -->
+    <div class="screen active" id="screen-start">
+      <p style="margin-top:0;font-size:14.5px;line-height:1.5;">
+        Testet innehåller 12 frågor om GDPR och hantering av personuppgifter,
+        med exempel som är relevanta för arbetet inom Vårdkedjan i Göteborg -
+        Frälsningsarmén (t.ex. boendedokumentation och kamerabevakning).
+        Godkänt resultat är minst 10 av 12 rätt (≈83&nbsp;%).
+      </p>
+      <label for="input-namn">Namn</label>
+      <input type="text" id="input-namn" placeholder="För- och efternamn">
+      <label for="input-epost">E-post</label>
+      <input type="email" id="input-epost" placeholder="namn@fralsningsarmen.se">
+      <button class="primary" id="btn-start">Starta testet</button>
+    </div>
+
+    <!-- INFO -->
+    <div class="screen" id="screen-info">
+      <div class="progress" id="info-progress-text">Info 1 av 4</div>
+      <div class="bar"><div class="bar-fill" id="info-progress-bar"></div></div>
+      <div class="question" id="info-title"></div>
+      <p id="info-text" style="font-size:14.5px;line-height:1.6;color:var(--ink);margin-bottom:24px;"></p>
+      <div style="display:flex;gap:10px;">
+        <button class="secondary" id="btn-info-back">Tillbaka</button>
+        <button class="primary" id="btn-info-next" style="flex:1;">Nästa</button>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="screen" id="screen-quiz">
+      <div class="progress" id="progress-text">Fråga 1 av 12</div>
+      <div class="bar"><div class="bar-fill" id="progress-bar"></div></div>
+      <div class="question" id="question-text"></div>
+      <div id="options-container"></div>
+      <div class="explanation" id="explanation-box"></div>
+      <button class="primary" id="btn-next" style="display:none;">Nästa fråga</button>
+    </div>
+
+    <!-- RESULT -->
+    <div class="screen" id="screen-result">
+      <div class="result-score">
+        <div class="big" id="result-score-num">0</div>
+        <div class="of" id="result-score-of">av 12 rätt</div>
+      </div>
+      <div class="verdict" id="result-verdict"></div>
+      <button class="primary" id="btn-retry">Gör om testet</button>
+      <div class="submit-status" id="submit-status"></div>
+      <span class="fallback-toggle" id="fallback-toggle">Fungerar inte den automatiska inlämningen? Skicka via e-post istället</span>
+      <div class="fallback-box" id="fallback-box">
+        <a href="#" id="fallback-link">Öppna e-postutkast med resultatet</a>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="note">
+    Detta test är avsett som ett internt utbildningsmoment och en allmän
+    kunskapsgenomgång av GDPR. För mer info besök parleportalen.fralsningsarmen.se
+    och sök på GDPR. För frågor eller synpunkter på frågorna, kontakta
+    jonas.nordenmark@fralsningsarmen.se
+  </footer>
+</div>
+
+<script>
+// ============================================================
+// CONFIG — anpassa vid driftsättning
+// ============================================================
+const CONFIG = {
+  quizCode: "GDPRUTB",
+  passCount: 10,              // antal rätt som krävs för godkänt (av 12)
+  // Power Automate HTTP-trigger URL (samma mönster som LBBRAND/NGBRAND).
+  // Lämna tom sträng tills flödet är byggt — testet fungerar lokalt även utan den.
+  resultFlowUrl: "https://default98a701b1e22c45d299261f334ccac4.3d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/12/workflows/364c689ffc51495192d7ed855b0d1c34/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=081L629j3k-uIyH4091DOxEsXIt6FZnOrbAhGp6VnmM",
+  // Reservmottagare för mailto-fallback om det automatiska flödet inte används/fungerar.
+  fallbackEmail: "jonas.nordenmark@fralsningsarmen.se",
+
+  questions: [
+    {
+      q: "Vad räknas som en personuppgift enligt GDPR?",
+      options: [
+        "Endast namn och personnummer",
+        "All information som direkt eller indirekt kan identifiera en levande fysisk person",
+        "Endast uppgifter som lagras digitalt",
+        "Enbart känsliga uppgifter, t.ex. hälsodata"
+      ],
+      correct: 1,
+      explanation: "GDPR definierar personuppgift brett: allt som direkt eller indirekt kan kopplas till en identifierad eller identifierbar person räknas — t.ex. namn, foto, röstinspelning eller en IP-adress."
+    },
+    {
+      q: "Vilket av följande räknas som en känslig personuppgift (särskild kategori) enligt GDPR?",
+      options: [
+        "Ett kundnummer",
+        "En arbetsplatsadress",
+        "Uppgift om en persons hälsotillstånd",
+        "Ett anställningsdatum"
+      ],
+      correct: 2,
+      explanation: "Särskilda kategorier av personuppgifter omfattar bland annat hälsouppgifter, etniskt ursprung, religion, sexuell läggning, politiska åsikter, fackligt medlemskap samt genetiska/biometriska uppgifter för identifiering. De kräver extra skyddsåtgärder och en tydlig laglig grund."
+    },
+    {
+      q: "Vad innebär principen om uppgiftsminimering?",
+      options: [
+        "Man ska samla in så mycket data som möjligt, för säkerhets skull",
+        "Man ska bara samla in de personuppgifter som är nödvändiga för det angivna syftet",
+        "All insamlad data ska raderas efter en vecka oavsett syfte",
+        "Endast IT-avdelningen får samla in personuppgifter"
+      ],
+      correct: 1,
+      explanation: "Uppgiftsminimering innebär att behandlingen ska begränsas till vad som verkligen behövs för det ändamål som angetts — inte 'bra att ha'-data för eventuellt framtida bruk."
+    },
+    {
+      q: "Vilka är exempel på lagliga grunder för behandling av personuppgifter enligt GDPR artikel 6?",
+      options: [
+        "Samtycke, avtal, rättslig förpliktelse, myndighetsutövning/allmänt intresse, grundläggande intressen och berättigat intresse",
+        "Bara samtycke — det är alltid den enda giltiga grunden",
+        "Vana, praxis och intern policy",
+        "Att den registrerade är anställd räcker alltid som grund, oavsett ändamål"
+      ],
+      correct: 0,
+      explanation: "GDPR artikel 6 anger sex möjliga lagliga grunder. Samtycke är bara en av dem — i många verksamheter, t.ex. vid vård/stöd eller anställning, är avtal, rättslig förpliktelse eller berättigat intresse ofta mer relevanta grunder."
+    },
+    {
+      q: "En klient, nuvarande eller tidigare, ber att få läsa sin journal. Vad gör du?",
+      options: [
+        "Skriver ut och lämnar över",
+        "Meddelar arbetsledning eller chef i beredskap som sköter processen",
+        "E-postar den till honom",
+        "Säger nej, vår policy tillåter inte läsning av journal"
+      ],
+      correct: 1,
+      explanation: "Klienten har rätt att läsa sin journal, men vi förbehåller oss rätten att göra en kontroll innan. Det kan till exempel ha smugit sig in annans personuppgifter som i så fall ska rensas innan. Klienten ska få tillgång till fysiskt exemplar inom 14 dagar. Vi mailar vanligtvis inte ut journaler."
+    },
+    {
+      q: "Inom hur lång tid måste en personuppgiftsincident som innebär en risk för de registrerades rättigheter och friheter normalt anmälas till IMY (Integritetsskyddsmyndigheten)?",
+      options: [
+        "24 timmar",
+        "72 timmar",
+        "7 dagar",
+        "30 dagar"
+      ],
+      correct: 1,
+      explanation: "Huvudregeln är att en anmälningspliktig personuppgiftsincident ska anmälas till tillsynsmyndigheten (IMY i Sverige) utan onödigt dröjsmål och om möjligt inom 72 timmar från upptäckt. För dig som anställd gäller att anmäla incident till verksamhetschef."
+    },
+    {
+      q: "Hur länge får en organisation spara personuppgifter enligt GDPR?",
+      options: [
+        "För alltid, om uppgifterna skulle kunna vara användbara senare",
+        "Endast så länge det finns ett giltigt och angivet ändamål — därefter ska uppgifterna gallras eller anonymiseras",
+        "Exakt ett år, oavsett verksamhet eller ändamål",
+        "Så länge det finns ledigt lagringsutrymme"
+      ],
+      correct: 1,
+      explanation: "Principen om lagringsminimering innebär att personuppgifter inte får sparas längre än nödvändigt för de ändamål de samlades in för, om inte en annan rättslig grund (t.ex. arkivlagstiftning) motiverar längre lagring. Hos oss gäller specifikt: journaler sparas i två år, medan fysisk dokumentation ur personens akt destrueras direkt vid avslutat uppdrag."
+    },
+    {
+      q: "I tjänsten ska jag göra en skrivelse om en klient (till exempel en rapport) där personuppgifter finns med, hur ska dokumentet sparas digitalt?",
+      options: [
+        "Lokalt på datorn",
+        "I huvudsak ska all sådan dokumentation ligga i Idok",
+        "På OneDrive med mitt tjänstekonto",
+        "I delade filer i Teams så alla kollegor kan hitta den"
+      ],
+      correct: 1,
+      explanation: "Vid hantering av känsliga uppgifter som exempelvis journalanteckningar, får dessa endast sparas i avsett system (t.ex. Idok), ej lokalt i datorn eller andra molntjänster. Se parleportalen.fralsningsarmen.se för aktuell policy."
+    },
+    {
+      q: "Vilken laglig grund används normalt för kamerabevakning i eller vid en fastighet, t.ex. för att förebygga inbrott eller skadegörelse?",
+      options: [
+        "Samtycke från alla som skulle kunna tänkas passera",
+        "Berättigat intresse, efter en dokumenterad intresseavvägning mot den enskildes integritet",
+        "Avtal med de anställda om att de accepterar övervakning",
+        "Ingen laglig grund krävs för kameror inomhus"
+      ],
+      correct: 1,
+      explanation: "Kamerabevakning grundas normalt på berättigat intresse, vilket kräver en intresseavvägning samt tydlig information (skyltning) om bevakningen. Vissa verksamheter kan även omfattas av kamerabevakningslagens tillståndskrav."
+    },
+    {
+      q: "En pärm med utskrivna personuppgifter om en boende ska förvaras...",
+      options: [
+        "Öppet i personalrummet, så alla kollegor lätt kommer åt den",
+        "Inlåst, med åtkomst begränsad till behörig personal",
+        "I bilen över natten, för att spara tid nästa dag",
+        "Kvar på skrivbordet mellan arbetspassen"
+      ],
+      correct: 1,
+      explanation: "Fysiska handlingar med personuppgifter, särskilt känsliga sådana, ska förvaras inlåst med begränsad åtkomst — precis som digitala system skyddas med behörighetsstyrning."
+    },
+    {
+      q: "En kollega undrar om det går bra att mejla en lista med personnummer och hälsouppgifter till en extern samarbetspartner via vanlig, okrypterad e-post. Vad bör du svara?",
+      options: [
+        "Ja, det går bra så länge mottagaren verkar pålitlig",
+        "Nej — känsliga uppgifter bör skickas på ett säkert/krypterat sätt, och bara om det finns en laglig grund och ett tydligt syfte",
+        "Ja, men bara om det sker på en fredag",
+        "Nej, e-post får aldrig användas i tjänsten oavsett innehåll"
+      ],
+      correct: 1,
+      explanation: "Känsliga personuppgifter kräver extra skyddsåtgärder vid överföring. Vanlig, okrypterad e-post är sällan lämplig — och överföringen ska alltid vila på en laglig grund och begränsas till vad mottagaren faktiskt behöver."
+    },
+    {
+      q: "Vem är personuppgiftsansvarig för de personuppgifter som behandlas i Frälsningsarméns verksamhet?",
+      options: [
+        "Varje enskild anställd, personligen",
+        "Frälsningsarmén som organisation/juridisk person",
+        "IMY (Integritetsskyddsmyndigheten)",
+        "Den externa molntjänstleverantören"
+      ],
+      correct: 1,
+      explanation: "Det är organisationen — Frälsningsarmén — som är personuppgiftsansvarig och bär det juridiska ansvaret för att behandlingen sker enligt GDPR, även om enskilda anställda hanterar uppgifterna i det dagliga arbetet."
+    }
+  ]
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  name: "",
+  email: "",
+  facility: "",
+  index: 0,
+  score: 0,
+  answered: false
+};
+
+const el = (id) => document.getElementById(id);
+
+// Förifyll namn/e-post från länkens URL-parametrar (?namn=...&epost=...),
+// så fälten redan är ifyllda när mottagaren klickar länken i utskicket.
+(function prefillFromQuery(){
+  const params = new URLSearchParams(window.location.search);
+  const namn = params.get("namn");
+  const epost = params.get("epost");
+  const enhet = params.get("enhet");
+  if(namn) el("input-namn").value = namn;
+  if(epost) el("input-epost").value = epost;
+  if(enhet) state.facility = enhet;
+})();
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  el(id).classList.add("active");
+}
+
+el("btn-start").addEventListener("click", () => {
+  const namn = el("input-namn").value.trim();
+  const epost = el("input-epost").value.trim();
+  if(!namn || !epost){
+    alert("Fyll i både namn och e-post innan du startar testet.");
+    return;
+  }
+  state.name = namn;
+  state.email = epost;
+  state.index = 0;
+  state.score = 0;
+  infoIndex = 0;
+  renderInfo();
+  showScreen("screen-info");
+});
+
+// ============================================================
+// INFO-SLIDES — kort GDPR-genomgång innan frågorna
+// ============================================================
+const infoSlides = [
+  {
+    title: "Vad är en personuppgift?",
+    text: "All information som direkt eller indirekt kan identifiera en levande person räknas — namn, foto, röstinspelning, IP-adress. Känsliga personuppgifter (t.ex. hälsa, etnicitet, religion, sexuell läggning) kräver extra skydd."
+  },
+  {
+    title: "Grundprinciperna i vårt arbete",
+    text: "Vi samlar bara in det som verkligen behövs för syftet (uppgiftsminimering). All behandling ska ha en laglig grund — t.ex. avtal, rättslig förpliktelse eller berättigat intresse. Uppgifter sparas inte längre än nödvändigt: hos oss sparas journaler i två år, medan fysisk dokumentation ur personens akt destrueras direkt vid avslutat uppdrag."
+  },
+  {
+    title: "I vardagen på boendet/kontoret",
+    text: "Dokumentation om boende (t.ex. i Idok) och fysiska pärmar ska förvaras inlåst och vara åtkomliga bara för behörig personal. Kamerabevakning kräver en dokumenterad intresseavvägning och tydlig skyltning. Känsliga uppgifter skickas aldrig okrypterat via vanlig e-post."
+  },
+  {
+    title: "Om något går fel",
+    text: "En personuppgiftsincident (t.ex. förlorad utrustning eller ett felskickat mejl) ska anmälas till närmaste chef/verksamhetschef direkt. Anmälningspliktiga incidenter ska till IMY inom 72 timmar. Det är Frälsningsarmén som organisation som är personuppgiftsansvarig — men varje anställd har ett ansvar i det dagliga arbetet."
+  },
+  {
+    title: "Mer information och policy",
+    text: 'Vill du läsa Frälsningsarméns övergripande policyer inom ett område — till exempel GDPR eller hur e-post används i tjänsten — hittar du dem på <a href="https://parleportalen.fralsningsarmen.se" target="_blank" rel="noopener">parleportalen.fralsningsarmen.se</a>.'
+  }
+];
+let infoIndex = 0;
+
+function renderInfo(){
+  const s = infoSlides[infoIndex];
+  el("info-progress-text").textContent = `Info ${infoIndex + 1} av ${infoSlides.length}`;
+  el("info-progress-bar").style.width = `${((infoIndex + 1) / infoSlides.length) * 100}%`;
+  el("info-title").textContent = s.title;
+  el("info-text").innerHTML = s.text;
+  el("btn-info-back").style.visibility = infoIndex === 0 ? "hidden" : "visible";
+  el("btn-info-next").textContent = infoIndex === infoSlides.length - 1 ? "Fortsätt till frågorna" : "Nästa";
+}
+
+el("btn-info-back").addEventListener("click", () => {
+  if(infoIndex > 0){
+    infoIndex--;
+    renderInfo();
+  }
+});
+
+el("btn-info-next").addEventListener("click", () => {
+  if(infoIndex < infoSlides.length - 1){
+    infoIndex++;
+    renderInfo();
+  } else {
+    showScreen("screen-quiz");
+    renderQuestion();
+  }
+});
+
+function renderQuestion(){
+  const total = CONFIG.questions.length;
+  const q = CONFIG.questions[state.index];
+  state.answered = false;
+
+  el("progress-text").textContent = `Fråga ${state.index + 1} av ${total}`;
+  el("progress-bar").style.width = `${(state.index / total) * 100}%`;
+  el("question-text").textContent = q.q;
+  el("explanation-box").classList.remove("show");
+  el("explanation-box").textContent = "";
+  el("btn-next").style.display = "none";
+
+  const container = el("options-container");
+  container.innerHTML = "";
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.textContent = opt;
+    btn.addEventListener("click", () => selectAnswer(i));
+    container.appendChild(btn);
+  });
+}
+
+function selectAnswer(i){
+  if(state.answered) return;
+  state.answered = true;
+
+  const q = CONFIG.questions[state.index];
+  const buttons = el("options-container").querySelectorAll(".option");
+  buttons.forEach((b, idx) => {
+    b.disabled = true;
+    if(idx === q.correct) b.classList.add("correct");
+    else if(idx === i) b.classList.add("incorrect");
+  });
+
+  if(i === q.correct) state.score++;
+
+  const expBox = el("explanation-box");
+  expBox.textContent = q.explanation;
+  expBox.classList.add("show");
+
+  el("btn-next").style.display = "block";
+  el("btn-next").textContent = (state.index === CONFIG.questions.length - 1) ? "Se resultat" : "Nästa fråga";
+}
+
+el("btn-next").addEventListener("click", () => {
+  state.index++;
+  if(state.index >= CONFIG.questions.length){
+    el("progress-bar").style.width = "100%";
+    finishQuiz();
+  } else {
+    renderQuestion();
+  }
+});
+
+function finishQuiz(){
+  const total = CONFIG.questions.length;
+  const pass = state.score >= CONFIG.passCount;
+
+  el("result-score-num").textContent = state.score;
+  el("result-score-of").textContent = `av ${total} rätt`;
+  const verdict = el("result-verdict");
+  verdict.textContent = pass
+    ? "Godkänt ✓"
+    : `Ej godkänt — minst ${CONFIG.passCount} av ${total} rätt krävs`;
+  verdict.className = "verdict " + (pass ? "pass" : "fail");
+
+  showScreen("screen-result");
+  submitResult(pass, total);
+  setupFallback(pass, total);
+}
+
+function submitResult(pass, total){
+  const statusEl = el("submit-status");
+
+  if(!CONFIG.resultFlowUrl){
+    statusEl.textContent = "Automatisk resultatinlämning är inte konfigurerad ännu — resultatet visas bara här.";
+    return;
+  }
+
+  const payload = {
+    namn: state.name,
+    epost: state.email,
+    poang: state.score,
+    maxpoang: total,
+    godkand: pass,
+    datum: new Date().toISOString(),
+    kod: CONFIG.quizCode,
+    enhet: state.facility
+  };
+
+  statusEl.textContent = "Skickar resultat...";
+  fetch(CONFIG.resultFlowUrl, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(payload)
+  })
+  .then(res => {
+    statusEl.textContent = res.ok
+      ? "Resultatet har skickats in."
+      : "Något gick fel vid inlämningen — försök igen eller använd e-postalternativet nedan.";
+  })
+  .catch(() => {
+    statusEl.textContent = "Kunde inte skicka resultatet automatiskt — använd e-postalternativet nedan.";
+  });
+}
+
+function setupFallback(pass, total){
+  const toggle = el("fallback-toggle");
+  const box = el("fallback-box");
+  const link = el("fallback-link");
+
+  toggle.onclick = () => box.classList.toggle("show");
+
+  const subject = encodeURIComponent(`${CONFIG.quizCode} resultat: ${state.name}`);
+  const body = encodeURIComponent(
+    `Namn: ${state.name}\n` +
+    `E-post: ${state.email}\n` +
+    `Enhet: ${state.facility || "(ej angiven)"}\n` +
+    `Poäng: ${state.score} av ${total}\n` +
+    `Godkänd: ${pass ? "Ja" : "Nej"}\n` +
+    `Datum: ${new Date().toLocaleString("sv-SE")}\n` +
+    `Kod: ${CONFIG.quizCode}`
+  );
+  link.href = `mailto:${CONFIG.fallbackEmail}?subject=${subject}&body=${body}`;
+}
+
+el("btn-retry").addEventListener("click", () => {
+  el("fallback-box").classList.remove("show");
+  showScreen("screen-start");
+});
+</script>
+</body>
+</html>
